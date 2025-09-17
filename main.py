@@ -1,6 +1,7 @@
 import re
 import statistics
 from collections import Counter
+import psycopg2 
 
 #open the HTML file in read mode
 with open("index.html", "r") as file:
@@ -40,3 +41,23 @@ total_colours = len(colour_list)
 red_occurrences = colour_list.count("Red")
 probability_of_red = red_occurrences / total_colours
 print(f"The probabilty of choosing red is: {probability_of_red}") 
+
+# Database connection setup
+conn = psycopg2.connect(
+    host="localhost",
+    database="Bincom",
+    user="postgres",
+    password="Asbnaomi@1" 
+)
+cursor = conn.cursor()
+
+# Insert colours and frequencies into the table
+for colour, freq in colour_dict.items():
+    cursor.execute(
+        "INSERT INTO colours (colour_name, frequency) VALUES (%s, %s)",
+        (colour, freq)
+    )
+
+conn.commit()
+cursor.close()
+conn.close()
